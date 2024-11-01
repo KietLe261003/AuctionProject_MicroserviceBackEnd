@@ -1,5 +1,6 @@
 package com.example.account_service.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -7,7 +8,6 @@ import lombok.*;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-@Data
 @Entity
 @Table(name = "user_db")
 public class User {
@@ -20,4 +20,9 @@ public class User {
     Boolean gender;
     String email;
     String phone;
+
+    @ManyToOne(cascade = CascadeType.ALL)
+    @JoinColumn(columnDefinition = "RoleId", nullable = false,referencedColumnName = "RoleId")
+    @JsonBackReference
+    Role role;
 }
