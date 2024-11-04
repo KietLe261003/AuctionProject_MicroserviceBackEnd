@@ -5,7 +5,9 @@ import org.springframework.http.HttpStatus;
 
 @Getter
 public enum ErrorCode {
-    User_NOT_FOUND(1000,"User Not found",HttpStatus.NOT_FOUND)
+    User_NOT_FOUND(1000,"User Not found",HttpStatus.NOT_FOUND),
+    Role_NOT_FOUND(1001,"Role Not found",HttpStatus.NOT_FOUND),
+    Not_Found_Email(1002,"Not Found Email",HttpStatus.NOT_FOUND),
     ;
 
     ErrorCode(int code, String message, HttpStatus httpStatus) {

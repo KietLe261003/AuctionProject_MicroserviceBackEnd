@@ -21,7 +21,7 @@ public class User {
     String email;
     String phone;
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne()
     @JoinColumn(columnDefinition = "RoleId", nullable = false,referencedColumnName = "RoleId")
     @JsonBackReference
     Role role;

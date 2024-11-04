@@ -1,10 +1,9 @@
 package com.example.account_service.controller;
 
-import com.example.account_service.dto.response.apiResponse;
-import com.example.account_service.service.roleService;
+import com.example.account_service.dto.response.ApiResponse;
+import com.example.account_service.service.RoleService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.Mapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -12,11 +11,11 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/role")
 public class roleController {
     @Autowired
-    roleService service;
+    RoleService service;
 
     @GetMapping("")
-    public apiResponse getAllRoles() {
-        apiResponse response = apiResponse.builder()
+    public ApiResponse getAllRoles() {
+        ApiResponse response = ApiResponse.builder()
                 .code(200)
                 .message("OK")
                 .data(service.findAll())

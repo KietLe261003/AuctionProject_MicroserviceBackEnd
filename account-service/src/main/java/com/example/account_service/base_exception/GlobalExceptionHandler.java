@@ -1,7 +1,6 @@
 package com.example.account_service.base_exception;
 
-import com.example.account_service.dto.response.apiResponse;
-import org.springframework.http.HttpStatus;
+import com.example.account_service.dto.response.ApiResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -9,9 +8,9 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 @ControllerAdvice
 public class GlobalExceptionHandler {
     @ExceptionHandler(value = AppException.class)
-    ResponseEntity<apiResponse> handlingAppException(AppException exception) {
+    ResponseEntity<ApiResponse> handlingAppException(AppException exception) {
         ErrorCode errorCode = exception.getErrorCode();
-        apiResponse res = new apiResponse();
+        ApiResponse res = new ApiResponse();
 
         res.setCode(errorCode.getCode());
         res.setMessage(errorCode.getMessage());
@@ -20,7 +19,7 @@ public class GlobalExceptionHandler {
     }
     @ExceptionHandler(value = RuntimeException.class)
     ResponseEntity handleRuntimeException(RuntimeException e) {
-        apiResponse Res = apiResponse.builder()
+        ApiResponse Res = ApiResponse.builder()
                 .code(400)
                 .message("Request bad")
                 .data(e.getMessage()).build();

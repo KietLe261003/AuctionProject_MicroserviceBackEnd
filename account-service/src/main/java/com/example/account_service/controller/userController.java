@@ -1,21 +1,31 @@
 package com.example.account_service.controller;
 
-import com.example.account_service.dto.response.apiResponse;
-import com.example.account_service.service.userService;
+import com.example.account_service.dto.request.user.UserCreation;
+import com.example.account_service.dto.request.user.UserUpdate;
+import com.example.account_service.dto.response.ApiResponse;
+import com.example.account_service.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/user")
 public class userController {
     @Autowired
-    userService service;
+    UserService service;
+
+    @PostMapping("")
+    public ApiResponse creatUser(@RequestBody UserCreation userReq){
+        ApiResponse apiResponse = ApiResponse.builder()
+                .code(200)
+                .message("success")
+                .data(service.create(userReq))
+                .build();
+        return apiResponse;
+    }
+
     @GetMapping("")
-    public apiResponse getAllUser() {
-        apiResponse response = apiResponse.builder()
+    public ApiResponse getAllUser() {
+        ApiResponse response = ApiResponse.builder()
                 .code(200)
                 .message("success")
                 .data(service.findAll())
@@ -24,12 +34,31 @@ public class userController {
     }
 
     @GetMapping("/{id}")
-    public apiResponse getUserById(@PathVariable Long id) {
-        apiResponse res = apiResponse.builder()
+    public ApiResponse getUserById(@PathVariable Long id) {
+        ApiResponse res = ApiResponse.builder()
                 .code(200)
                 .message("success")
                 .data(service.findById(id))
                 .build();
         return res;
+    }
+
+    @PutMapping("/{id}")
+    public ApiResponse updateUser(@PathVariable Long id,@RequestBody UserUpdate userReq) {
+        ApiResponse apiResponse = ApiResponse.builder()
+                .code(200)
+                .message("success")
+                .data(service.update(id,userReq))
+                .build();
+        return apiResponse;
+    }
+    @DeleteMapping("/{id}")
+    public ApiResponse deleteUser(@PathVariable Long id) {
+        service.delete(id);
+        ApiResponse apiResponse = ApiResponse.builder()
+                .code(200)
+                .message("success")
+                .build();
+        return apiResponse;
     }
 }

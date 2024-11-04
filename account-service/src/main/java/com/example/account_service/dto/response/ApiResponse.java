@@ -9,7 +9,7 @@ import lombok.*;
 @NoArgsConstructor
 @Builder
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class apiResponse {
+public class ApiResponse {
     private int code;
     private String message;
     private Object data;
