@@ -4,8 +4,12 @@ import com.example.account_service.dto.request.user.UserCreation;
 import com.example.account_service.dto.request.user.UserUpdate;
 import com.example.account_service.dto.response.ApiResponse;
 import com.example.account_service.service.UserService;
+import com.nimbusds.jose.JOSEException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.web.bind.annotation.*;
+
+import java.text.ParseException;
 
 @RestController
 @RequestMapping("/api/user")
@@ -24,11 +28,12 @@ public class userController {
     }
 
     @GetMapping("")
-    public ApiResponse getAllUser() {
+    public ApiResponse getAllUser(@RequestHeader(name = HttpHeaders.AUTHORIZATION) String authorizationHeader) throws ParseException, JOSEException {
+        String token = authorizationHeader.substring("Bearer ".length());
         ApiResponse response = ApiResponse.builder()
                 .code(200)
                 .message("success")
-                .data(service.findAll())
+                .data(service.findAll(token))
                 .build();
         return response;
     }
