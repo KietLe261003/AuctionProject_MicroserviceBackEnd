@@ -5,5 +5,8 @@ package com.example.account_service.respository;
 import com.example.account_service.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface userRespository extends JpaRepository<User,Long> {
+import java.util.Optional;
+
+public interface UserRespository extends JpaRepository<User,Long> {
+    Optional<User> findByEmail(String email);
 }

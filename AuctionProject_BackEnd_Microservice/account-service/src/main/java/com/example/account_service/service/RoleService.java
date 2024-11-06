@@ -1,18 +1,17 @@
 package com.example.account_service.service;
 
-
-import com.example.account_service.entity.User;
-import com.example.account_service.respository.userRespository;
+import com.example.account_service.entity.Role;
+import com.example.account_service.respository.RoleRespository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
-public class userService {
+public class RoleService {
     @Autowired
-    userRespository respository;
-    public List<User> findAll() {
+    RoleRespository respository;
+    public List<Role> findAll() {
         return respository.findAll();
     }
 }
