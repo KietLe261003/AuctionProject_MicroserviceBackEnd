@@ -1,22 +1,28 @@
 package com.example.billingandfees_service.entity;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
+import jakarta.persistence.*;
+import lombok.*;
+
+import java.util.List;
 
 @Entity
+@AllArgsConstructor
+@NoArgsConstructor
+@Getter
+@Setter
+@Builder
 public class Tax {
     @Id
     Long id;
     String taxName;
     String taxDescription;
-    Long taxAmount;
+    Double taxAmount;
     Boolean delflag;
-
-    @ManyToOne
-    @JoinColumn(columnDefinition = "BillItemId",nullable = false,referencedColumnName = "BillItemId")
+    @Enumerated(EnumType.STRING)
+    TaxType taxType;
+    @ManyToMany(mappedBy = "taxes", cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JsonBackReference
-    BillItem billItem;
+    private List<BillItem> billItems;
+
 }

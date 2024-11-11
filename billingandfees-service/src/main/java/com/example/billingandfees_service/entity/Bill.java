@@ -17,12 +17,11 @@ import java.util.List;
 public class Bill {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "BillId")
     Long id;
     Long userId;
     Long staffId;
     LocalDate billDate;
-    Long totalAmount;
+    Double totalAmount;
     LocalDate paymentTerm;
     Boolean paymentStatus;
 
