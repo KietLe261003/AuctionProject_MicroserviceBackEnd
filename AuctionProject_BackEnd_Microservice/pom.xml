@@ -18,6 +18,8 @@
         <module>account-service</module>
         <module>discovery-server</module>
         <module>api-gateway</module>
+        <module>inspector-service</module>
+        <module>billingandfees-service</module>
     </modules>
 
     <properties>
