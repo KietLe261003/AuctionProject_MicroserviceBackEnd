@@ -14,7 +14,6 @@
     <version>1.0-SNAPSHOT</version>
     <packaging>pom</packaging>
     <modules>
-        <module>asset-service</module>
         <module>account-service</module>
         <module>discovery-server</module>
         <module>api-gateway</module>
