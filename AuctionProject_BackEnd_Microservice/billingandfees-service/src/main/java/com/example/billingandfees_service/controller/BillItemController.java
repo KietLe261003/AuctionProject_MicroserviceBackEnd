@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/billitem")
+@RequestMapping("/bill-management-service/billitem")
 public class BillItemController {
     @Autowired
     private BillItemService billItemService;

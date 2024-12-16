@@ -8,7 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("api/tax")
+@RequestMapping("/bill-management-service/tax")
 public class TaxController {
     @Autowired
     private TaxService taxService;
