@@ -72,6 +72,5 @@ public class AuthService {
         } catch (JOSEException e) {
             throw new RuntimeException(e);
         }
-
     }
 }
