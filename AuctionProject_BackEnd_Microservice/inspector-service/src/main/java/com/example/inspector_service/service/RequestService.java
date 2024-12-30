@@ -7,6 +7,7 @@ import com.example.inspector_service.dto.response.RequestAssetResponse;
 import com.example.inspector_service.entity.Inspector;
 import com.example.inspector_service.entity.Request;
 import com.example.inspector_service.mapper.RequestMapper;
+import com.example.inspector_service.repository.InspectorRespository;
 import com.example.inspector_service.repository.RequestRespository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -20,13 +21,15 @@ public class RequestService {
     @Autowired
     InspectorService inspectorService;
     @Autowired
+    InspectorRespository inspectorRespository;
+    @Autowired
     RequestMapper requestMapper;
 
     public RequestAssetResponse createRequest(CreateRequestAsset requestRequest) throws AppException {
         Request request = requestMapper.toRequest(requestRequest);
         if(requestRequest.getInspectorId()!=null)
         {
-            Inspector inspector = inspectorService.getInspectorById(requestRequest.getInspectorId());
+            Inspector inspector = inspectorRespository.findById(requestRequest.getInspectorId()).orElseThrow(()-> new AppException(ErrorCode.Not_Found_Inspector));
             request.setInspector(inspector);
         }
         requestRespository.save(request);
@@ -47,7 +50,7 @@ public class RequestService {
         requestMapper.updateRequest(request,requestRequest);
         if(requestRequest.getInspectorId()!=null)
         {
-            Inspector inspector = inspectorService.getInspectorById(requestRequest.getInspectorId());
+            Inspector inspector = inspectorRespository.findById(requestRequest.getInspectorId()).orElseThrow(()-> new AppException(ErrorCode.Not_Found_Inspector));
             request.setInspector(inspector);
         }
         requestRespository.save(request);
