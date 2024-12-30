@@ -5,6 +5,7 @@ import com.example.account_service.base_exception.ErrorCode;
 import com.example.account_service.base_exception.AppException;
 import com.example.account_service.dto.request.user.UserCreation;
 import com.example.account_service.dto.request.user.UserUpdate;
+import com.example.account_service.dto.response.UserResponse;
 import com.example.account_service.entity.Role;
 import com.example.account_service.entity.User;
 import com.example.account_service.mapper.UserMapper;
@@ -31,17 +32,20 @@ public class UserService {
     @Autowired
     AuthService authService;
 
-    public List<User> findAll(String token) throws ParseException, JOSEException {
+    public List<UserResponse> findAll(String token) throws ParseException, JOSEException {
         if(token == null || token.isEmpty())
             throw new AppException(ErrorCode.Verify_Failed);
         if(authService.introspect(token)==false)
             throw new AppException(ErrorCode.Verify_Failed);
-        return respository.findAll();
+        List<User> users = respository.findAll();
+        return users.stream().map((user)->userMapper.toUserResponse(user)).toList();
     }
 
-    public User findById(Long id) {
-        return respository.findById(id)
+    public UserResponse findById(Long id) {
+        User user = respository.findById(id)
                 .orElseThrow(() -> new AppException(ErrorCode.User_NOT_FOUND));
+        UserResponse userResponse = userMapper.toUserResponse(user);
+        return userResponse;
     }
     public User create(UserCreation userCreation) {
         //Kiểm tra email đã tồn tại chưa
@@ -61,7 +65,8 @@ public class UserService {
         {
             throw new AppException(ErrorCode.Id_NULL);
         }
-        User user = findById(id);
+        User user = respository.findById(id)
+                .orElseThrow(() -> new AppException(ErrorCode.User_NOT_FOUND));
         userMapper.updateUser(user,userUpdate);
         if(userUpdate.getRoleId()!=null)
         {
