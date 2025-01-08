@@ -1,0 +1,63 @@
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka
+
+spring:
+  application:
+    name: api-gateway
+
+  cloud:
+    gateway:
+      routes:
+        - id: discovery-server
+          uri: http://localhost:8761
+          predicates:
+            - Path=/eureka/web
+          filters:
+            - SetPath=/
+        - id: discovery-server-static
+          uri: http://localhost:8761
+          predicates:
+            - Path=/eureka/**
+        - id: account-service
+          uri: lb://account-service
+          predicates:
+            - Path=/api/user/**
+        - id: inspector-service
+          uri: lb://inspector-service
+          predicates:
+            - Path=/api/inspector/**
+        - id: billingandfees-service
+          uri: lb://billingandfees-service
+          predicates:
+            - Path=/bill-management-service/**
+        - id: auction-session-service
+          uri: http://localhost:3002
+          predicates:
+            - Path=/auction-management-service/**
+        - id: auction-service-1
+          uri: http://localhost:3000
+          predicates:
+            - Path=/event-management-service/**
+      globalcors:
+        corsConfigurations:
+          '[/**]':
+            allowedOrigins: "http://localhost:5173"
+            allowedMethods:
+              - GET
+              - POST
+              - PUT
+              - DELETE
+              - OPTIONS
+            allowedHeaders: "*"
+server:
+  port: 8080
+logging:
+  level:
+    root: INFO
+    org.springframework.cloud.gateway.route.RouteDefinitionLocator: INFO
+    org.springframework.cloud.gateway: trace
+
+signer:
+  key: POMp+d1dJKroCAaqsw82zIj961ZhNdxA2r91BE+vF05ET7bdVmNZZmEEzgUskk5Z
