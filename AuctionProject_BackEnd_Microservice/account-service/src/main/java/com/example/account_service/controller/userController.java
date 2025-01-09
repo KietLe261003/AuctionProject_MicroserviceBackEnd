@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import java.text.ParseException;
 
 @RestController
-@RequestMapping("/api/user")
+@RequestMapping("/user")
 public class userController {
     @Autowired
     UserService service;

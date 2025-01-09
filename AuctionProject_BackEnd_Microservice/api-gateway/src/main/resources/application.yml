@@ -23,11 +23,11 @@ spring:
         - id: account-service
           uri: lb://account-service
           predicates:
-            - Path=/api/user/**
+            - Path=/user/**
         - id: inspector-service
           uri: lb://inspector-service
           predicates:
-            - Path=/api/inspector/**
+            - Path=/inspector/**
         - id: billingandfees-service
           uri: lb://billingandfees-service
           predicates:
@@ -37,9 +37,9 @@ spring:
           predicates:
             - Path=/auction-management-service/**
         - id: auction-service-1
-          uri: http://localhost:3000
+          uri: http://localhost:3001
           predicates:
-            - Path=/event-management-service/**
+            - Path=/asset-service/**
       globalcors:
         corsConfigurations:
           '[/**]':
