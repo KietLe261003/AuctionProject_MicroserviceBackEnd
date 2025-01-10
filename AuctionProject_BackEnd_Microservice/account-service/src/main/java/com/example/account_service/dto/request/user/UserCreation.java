@@ -3,6 +3,7 @@ package com.example.account_service.dto.request.user;
 import com.example.account_service.entity.Role;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import lombok.AllArgsConstructor;
@@ -15,6 +16,7 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 public class UserCreation {
+    @Column(columnDefinition = "NVARCHAR(MAX)", nullable = false)
     String name;
     String password;
     String email;

@@ -15,6 +15,7 @@ public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
+    @Column(columnDefinition = "NVARCHAR(MAX)", nullable = false)
     String name;
     String password;
     String address;
