@@ -1,6 +1,7 @@
 package com.example.account_service.controller;
 
 import com.example.account_service.dto.request.user.UserCreation;
+import com.example.account_service.dto.request.user.UserCreationByAdmin;
 import com.example.account_service.dto.request.user.UserUpdate;
 import com.example.account_service.dto.response.ApiResponse;
 import com.example.account_service.service.UserService;
@@ -26,7 +27,15 @@ public class userController {
                 .build();
         return apiResponse;
     }
-
+    @PostMapping("/createUser")
+    public ApiResponse creatUserByAdmin(@RequestBody UserCreationByAdmin userReq){
+        ApiResponse apiResponse = ApiResponse.builder()
+                .code(200)
+                .message("success")
+                .data(service.createUserByAdmin(userReq))
+                .build();
+        return apiResponse;
+    }
     @GetMapping("")
     public ApiResponse getAllUser(@RequestHeader(name = HttpHeaders.AUTHORIZATION) String authorizationHeader) throws ParseException, JOSEException {
         String token = authorizationHeader.substring("Bearer ".length());

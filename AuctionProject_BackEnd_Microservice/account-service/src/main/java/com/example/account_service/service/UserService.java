@@ -4,6 +4,7 @@ package com.example.account_service.service;
 import com.example.account_service.base_exception.ErrorCode;
 import com.example.account_service.base_exception.AppException;
 import com.example.account_service.dto.request.user.UserCreation;
+import com.example.account_service.dto.request.user.UserCreationByAdmin;
 import com.example.account_service.dto.request.user.UserUpdate;
 import com.example.account_service.dto.response.UserResponse;
 import com.example.account_service.entity.Role;
@@ -58,6 +59,16 @@ public class UserService {
         user.setRole(role);
         PasswordEncoder passwordEncoder = new BCryptPasswordEncoder(10);
         user.setPassword(passwordEncoder.encode(userCreation.getPassword()));
+        return respository.save(user);
+    }
+    public User createUserByAdmin(UserCreationByAdmin userCreationByAdmin) {
+        if(respository.findByEmail(userCreationByAdmin.getEmail()).isPresent())
+        {
+            throw new AppException(ErrorCode.Email_Already_Exist);
+        }
+        User user = userMapper.toUser(userCreationByAdmin);
+        PasswordEncoder passwordEncoder = new BCryptPasswordEncoder(10);
+        user.setPassword(passwordEncoder.encode("123456"));
         return respository.save(user);
     }
     public User update(Long id, UserUpdate userUpdate) {

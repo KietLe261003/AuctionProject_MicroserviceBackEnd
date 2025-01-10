@@ -7,7 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api/inspector")
+@RequestMapping("/inspector")
 public class InspectorController {
     @Autowired
     private InspectorService inspectorService;

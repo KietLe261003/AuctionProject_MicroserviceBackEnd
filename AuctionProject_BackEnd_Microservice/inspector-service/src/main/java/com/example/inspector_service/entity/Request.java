@@ -18,7 +18,9 @@ public class Request {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
+    @Column(columnDefinition = "NVARCHAR(MAX)", nullable = false)
     String name;
+    @Column(columnDefinition = "NVARCHAR(MAX)", nullable = false)
     String description;
     Boolean verify;
     Boolean status;
