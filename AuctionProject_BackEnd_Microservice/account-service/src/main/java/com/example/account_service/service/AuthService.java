@@ -73,4 +73,22 @@ public class AuthService {
             throw new RuntimeException(e);
         }
     }
+    public String getEmailFromToken(String token) {
+        try {
+            // Parse the token
+            SignedJWT signedJWT = SignedJWT.parse(token);
+
+            // Verify the token using the signer key
+            JWSVerifier verifier = new MACVerifier(Signer_Key.getBytes());
+            if (!signedJWT.verify(verifier)) {
+                throw new AppException(ErrorCode.Verify_Failed);
+            }
+
+            // Extract the claims and get the subject (email)
+            JWTClaimsSet claims = signedJWT.getJWTClaimsSet();
+            return claims.getSubject();
+        } catch (ParseException | JOSEException e) {
+            throw new AppException(ErrorCode.Verify_Failed);
+        }
+    }
 }
