@@ -8,6 +8,7 @@ import com.example.account_service.service.UserService;
 import com.nimbusds.jose.JOSEException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.text.ParseException;
@@ -75,4 +76,14 @@ public class userController {
                 .build();
         return apiResponse;
     }
+    @GetMapping("/findbytoken/{token}")
+    public ResponseEntity<ApiResponse> findByToken(@PathVariable("token") String token) {
+        ApiResponse response = ApiResponse.builder()
+                .code(200)
+                .message("Success")
+                .data(service.findUserByToken(token))
+                .build();
+        return ResponseEntity.ok(response);
+    }
+
 }

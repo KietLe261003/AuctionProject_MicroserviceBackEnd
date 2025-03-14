@@ -91,4 +91,8 @@ public class UserService {
     public void delete(Long id) {
         respository.deleteById(id);
     }
+    public User findUserByToken(String token){
+        String email = authService.getEmailFromToken(token);
+        return respository.findByEmail(email).orElseThrow(()->new AppException(ErrorCode.User_NOT_FOUND));
+    }
 }
