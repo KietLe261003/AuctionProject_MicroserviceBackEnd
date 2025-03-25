@@ -9,6 +9,8 @@ public enum ErrorCode {
     NOT_FOUND_TAX(1000,"Not found tax",HttpStatus.NOT_FOUND),
     NOT_FOUND_BILLITEM(1000,"Not found bill item",HttpStatus.NOT_FOUND),
     Payment_Create_Failed(1001,"Payment Create Failed",HttpStatus.BAD_REQUEST),
+    NOT_FOUND_Transaction(1000,"Not found Transaction of auction",HttpStatus.NOT_FOUND),
+    Transaction_Was_Payment(1001,"Transaction Was Payment",HttpStatus.BAD_REQUEST),
     ;
     int code;
     String message;

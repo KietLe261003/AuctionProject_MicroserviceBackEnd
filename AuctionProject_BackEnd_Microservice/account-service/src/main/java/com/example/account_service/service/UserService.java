@@ -13,6 +13,7 @@ import com.example.account_service.mapper.UserMapper;
 import com.example.account_service.respository.RoleRespository;
 import com.example.account_service.respository.UserRespository;
 import com.nimbusds.jose.JOSEException;
+import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -91,8 +92,9 @@ public class UserService {
     public void delete(Long id) {
         respository.deleteById(id);
     }
-    public User findUserByToken(String token){
+    public UserResponse findUserByToken(String token){
         String email = authService.getEmailFromToken(token);
-        return respository.findByEmail(email).orElseThrow(()->new AppException(ErrorCode.User_NOT_FOUND));
+        User user = respository.findByEmail(email).orElseThrow(()->new AppException(ErrorCode.User_NOT_FOUND));
+        return findById(user.getId());
     }
 }

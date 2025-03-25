@@ -4,7 +4,10 @@ package com.example.billingandfees_service.service;
 import com.example.billingandfees_service.base_exception.AppException;
 import com.example.billingandfees_service.base_exception.ErrorCode;
 import com.example.billingandfees_service.configuation.VNPayConfig;
+import com.example.billingandfees_service.dto.request.AuctionTransactionRequest;
 import com.example.billingandfees_service.dto.request.RegisterAuctionRequest;
+import com.example.billingandfees_service.entity.AuctionTransaction;
+import com.example.billingandfees_service.repository.AuctionTransactionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -14,6 +17,7 @@ import java.math.BigDecimal;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -28,8 +32,16 @@ public class VNPayService {
 
     @Autowired
     private RegisterAuctionService registerAuctionService;
+    @Autowired
+    private AuctionTransactionRepository transactionRepository;
+    @Autowired
+    private AuctionTransactionService auctionTransactionService;
 
     private Map<String, RegisterAuctionRequest> temporaryStorage = new HashMap<>();
+    private Map<String, AuctionTransaction> temporaryStorageAution= new HashMap<>();
+    @Autowired
+    private AuctionTransactionRepository auctionTransactionRepository;
+
     public String createPaymentUrl(RegisterAuctionRequest registerAuctionRequest,String  ipAddress) {
 
         try {
@@ -65,6 +77,50 @@ public class VNPayService {
             query += "&vnp_SecureHash=" + secureHash;
 
             temporaryStorage.put(vnpParams.get("vnp_TxnRef"),registerAuctionRequest);
+            return vnPayConfig.getUrl() + "?" + query;
+        }catch (Exception e){
+            throw new AppException(ErrorCode.Payment_Create_Failed);
+        }
+    }
+    public String createPaymentUrlForAuction(Long auctionTransactionId, String  ipAddress) {
+        AuctionTransaction auctionTransaction= auctionTransactionService.findById(auctionTransactionId);
+        if(auctionTransaction.getStatus().equals("Complete"))
+        {
+            throw new AppException(ErrorCode.Transaction_Was_Payment);
+        }
+        try {
+            Map<String, String> vnpParams = new HashMap<>();
+            //Thông tin
+            vnpParams.put("vnp_Version", "2.1.0");
+            vnpParams.put("vnp_Command", "pay");
+            vnpParams.put("vnp_TmnCode", vnPayConfig.getTmnCode());
+
+            BigDecimal amount = new BigDecimal(auctionTransaction.getAmount()).multiply(BigDecimal.valueOf(100));
+            vnpParams.put("vnp_Amount", amount.toString());
+            vnpParams.put("vnp_CurrCode", "VND");
+            vnpParams.put("vnp_TxnRef", generateTxnRef(auctionTransaction.getUserId()+""));
+
+            vnpParams.put("vnp_OrderInfo", "Payment for "+auctionTransaction.getAuctionId());
+            vnpParams.put("vnp_OrderType", "other");
+            vnpParams.put("vnp_Locale", "vn");
+            vnpParams.put("vnp_ReturnUrl", vnPayConfig.getReturnUrlAuction());
+            vnpParams.put("vnp_IpAddr", ipAddress);
+
+            // thời hạn
+            String createDate = getCurrentDate();
+            vnpParams.put("vnp_CreateDate", createDate);
+            String expireDate = getExpireDate(createDate);
+            vnpParams.put("vnp_ExpireDate", expireDate);
+
+            String query = buildQueryString(vnpParams);
+
+            // Calculate the secure hash
+            String secureHash = calculateHMACSHA512(query, vnPayConfig.getHashSecret());
+
+            // Add secure hash to the query string
+            query += "&vnp_SecureHash=" + secureHash;
+
+            temporaryStorageAution.put(vnpParams.get("vnp_TxnRef"),auctionTransaction);
             return vnPayConfig.getUrl() + "?" + query;
         }catch (Exception e){
             throw new AppException(ErrorCode.Payment_Create_Failed);
@@ -131,6 +187,42 @@ public class VNPayService {
                 // Payment success, save course of user
                 temporaryStorage.remove(txnRef); // Remove from temporary storage
                 registerAuctionService.save(registerAuctionRequest);
+                return "Payment Success! Ref: " + txnRef + ", Amount: " + params.get("vnp_Amount");
+            } else {
+                return "Payment Failed! Ref: " + txnRef + ", Amount: " + params.get("vnp_Amount");
+            }
+        } catch (Exception e) {
+            return "Error calculating signature!";
+        }
+    }
+    public String processVNPayResponseAuction(Map<String, String> params) {
+        String txnRef = params.get("vnp_TxnRef");
+        AuctionTransaction auctionTransaction = temporaryStorageAution.get(txnRef);
+
+        if (auctionTransaction == null) {
+            return "Invalid transaction reference!";
+        }
+
+        // Verify the security hash from VNPay
+        String secureHash = params.get("vnp_SecureHash");
+        params.remove("vnp_SecureHash"); // Remove secure hash from params to calculate it again
+
+        String query = buildQueryString(params);
+
+        try {
+            String calculatedHash = calculateHMACSHA512(query, vnPayConfig.getHashSecret());
+
+            if (!calculatedHash.equals(secureHash)) {
+                return "Invalid payment signature!";
+            }
+
+            String responseCode = params.get("vnp_ResponseCode");
+            if ("00".equals(responseCode)) {
+                // Payment success, save course of user
+                temporaryStorageAution.remove(txnRef); // Remove from temporary storage
+                auctionTransaction.setStatus("Complete");
+                auctionTransaction.setSubmitDate(LocalDateTime.now());
+                auctionTransactionRepository.save(auctionTransaction);
                 return "Payment Success! Ref: " + txnRef + ", Amount: " + params.get("vnp_Amount");
             } else {
                 return "Payment Failed! Ref: " + txnRef + ", Amount: " + params.get("vnp_Amount");
