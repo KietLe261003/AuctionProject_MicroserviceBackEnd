@@ -16,4 +16,5 @@ public class VNPayConfig {
     private String url = "https://sandbox.vnpayment.vn/paymentv2/vpcpay.html";  // URL VNPay Sandbox
     private String returnUrl = "http://localhost:8083/bill-management-service/registerauction/vnpay_return";  // URL trả về sau khi thanh toán
     private String returnUrlAuction = "http://localhost:8083/bill-management-service/auctiontransaction/vnpay_return";
+
 }

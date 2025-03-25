@@ -18,6 +18,7 @@ import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
+
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -41,6 +42,7 @@ public class VNPayService {
     private Map<String, AuctionTransaction> temporaryStorageAution= new HashMap<>();
     @Autowired
     private AuctionTransactionRepository auctionTransactionRepository;
+
 
     public String createPaymentUrl(RegisterAuctionRequest registerAuctionRequest,String  ipAddress) {
 
@@ -126,6 +128,7 @@ public class VNPayService {
             throw new AppException(ErrorCode.Payment_Create_Failed);
         }
     }
+
     private String generateTxnRef(String roomId) {
         return roomId + "_" + System.currentTimeMillis();
     }
